@@ -84,6 +84,12 @@ If not
 
 ### File Record
 
+| Name | Type / Size | Info |
+| --- | --- | --- |
+| nameHash | uint64 | Hash of the file name |
+| size | uint32 | If bit 0x40000000 is set and files are default compressed, this file is not compressed <br> If bit 0x40000000 is set and files are default not compressed, this file is compressed |
+| offset | uint32 | Offset to file raw data |
+
 ## File Name block
 
 # References
