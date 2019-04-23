@@ -7,6 +7,12 @@
 
 namespace BSA {
 
+class LengthPrefixedString {
+public:
+    uint8_t length = 0;
+    char* string = nullptr;
+};
+
 class Header {
 public:
     char fileId[4];
@@ -27,7 +33,26 @@ public:
     uint32_t offset;
 };
 
+class FileRecord {
+public:
+    uint64_t nameHash;
+    uint32_t size;
+    uint32_t offset;
+};
+
 class FileRecordBlock {
+public:
+    FileRecordBlock(bool hasName = true, uint32_t blocksCount = 0)
+        : hasName(hasName)
+        , blocksCount(blocksCount)
+    {
+    }
+
+    LengthPrefixedString name;
+    std::vector<FileRecord> fileRecords;
+
+    const bool hasName;
+    const uint32_t blocksCount;
 };
 
 class FileNameBlock {
@@ -46,8 +71,10 @@ public:
 private:
 };
 
+std::istream& operator>>(std::istream& is, LengthPrefixedString& string);
 std::istream& operator>>(std::istream& is, Header& header);
 std::istream& operator>>(std::istream& is, FolderRecord& folderRecord);
+std::istream& operator>>(std::istream& is, FileRecord& fileRecord);
 std::istream& operator>>(std::istream& is, FileRecordBlock& fileRecordBlock);
 std::istream& operator>>(std::istream& is, FileNameBlock& fileNameBlock);
 std::istream& operator>>(std::istream& is, FileBlock& fileBlock);
