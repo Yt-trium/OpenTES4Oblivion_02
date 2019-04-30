@@ -56,9 +56,15 @@ public:
 };
 
 class FileNameBlock {
+public:
+    std::vector<std::string> fileNames;
 };
 
 class FileBlock {
+public:
+    std::string name;
+    uint32_t size;
+    uint8_t* data;
 };
 
 class BSA {
@@ -76,7 +82,6 @@ std::istream& operator>>(std::istream& is, Header& header);
 std::istream& operator>>(std::istream& is, FolderRecord& folderRecord);
 std::istream& operator>>(std::istream& is, FileRecord& fileRecord);
 std::istream& operator>>(std::istream& is, FileRecordBlock& fileRecordBlock);
-std::istream& operator>>(std::istream& is, FileNameBlock& fileNameBlock);
 std::istream& operator>>(std::istream& is, FileBlock& fileBlock);
 std::istream& operator>>(std::istream& is, BSA& bsa);
 }

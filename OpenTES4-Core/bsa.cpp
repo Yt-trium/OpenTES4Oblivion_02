@@ -80,11 +80,6 @@ std::istream& BSA::operator>>(std::istream& is, FileRecordBlock& fileRecordBlock
     return is;
 }
 
-std::istream& BSA::operator>>(std::istream& is, FileNameBlock& fileNameBlock)
-{
-    return is;
-}
-
 std::istream& BSA::operator>>(std::istream& is, FileBlock& fileBlock)
 {
     return is;
@@ -92,8 +87,12 @@ std::istream& BSA::operator>>(std::istream& is, FileBlock& fileBlock)
 
 std::istream& BSA::operator>>(std::istream& is, BSA& bsa)
 {
+    // header
     is >> bsa.header;
 
+    std::bitset<32> archiveFlags(bsa.header.archiveFlags);
+
+    // folderRecords
     bsa.folderRecords.reserve(bsa.header.folderCount);
 
     for (uint32_t i = 0; i < bsa.header.folderCount; ++i) {
@@ -104,8 +103,7 @@ std::istream& BSA::operator>>(std::istream& is, BSA& bsa)
 
     bsa.folderRecords.shrink_to_fit();
 
-    std::bitset<32> archiveFlags(bsa.header.archiveFlags);
-
+    // fileRecordBlocks
     bsa.fileRecordBlocks.reserve(bsa.header.folderCount);
 
     for (uint32_t i = 0; i < bsa.header.folderCount; ++i) {
@@ -115,6 +113,21 @@ std::istream& BSA::operator>>(std::istream& is, BSA& bsa)
     }
 
     bsa.fileRecordBlocks.shrink_to_fit();
+
+    // fileNameBlock
+    if (archiveFlags.test(1)) {
+        bsa.fileNameBlock.fileNames.reserve(bsa.header.fileCount);
+
+        for (uint32_t i = 0; i < bsa.header.fileCount; ++i) {
+            std::string fn;
+            is >> fn;
+            bsa.fileNameBlock.fileNames.push_back(fn);
+        }
+
+        bsa.fileNameBlock.fileNames.shrink_to_fit();
+    }
+
+    // files
 
     return is;
 }
